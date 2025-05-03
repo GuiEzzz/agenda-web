@@ -2,8 +2,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-import FloatingInput from '@/components/FloatingInput';
+import FloatingInput from "@/components/FloatingInput";
 
 export default function CadastroContato() {
   const router = useRouter();
@@ -31,19 +30,20 @@ export default function CadastroContato() {
     setError("");
 
     if (idade > 100) {
-        setError("A idade não pode ser maior que 100.");
-        return;
-    } if (idade <= 0) {
-        setError("A idade não pode ser menor ou igual à zero.")
-        return;
-    } 
-    
-    if (nome == null){
-        setError("O campo Nome é obrigatório!")
-        return;
-    } else if (telefones == null){
-        setError("O campo Telefone é obrigatório!")
-        return;
+      setError("A idade não pode ser maior que 100.");
+      return;
+    }
+    if (idade <= 0) {
+      setError("A idade não pode ser menor ou igual à zero.");
+      return;
+    }
+    if (!nome.trim()) {
+      setError("O campo Nome é obrigatório!");
+      return;
+    }
+    if (telefones.length === 0 || telefones.every((t) => !t.trim())) {
+      setError("O campo Telefone é obrigatório!");
+      return;
     }
 
     const payload = {
@@ -64,20 +64,17 @@ export default function CadastroContato() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      console.log('passou nessa caraia')
     }
 
     router.push("/");
   };
 
   const handleAddTelefone = () => setTelefones([...telefones, ""]);
-
   const handleChangeTelefone = (i: number, value: string) => {
     const novos = [...telefones];
     novos[i] = value;
     setTelefones(novos);
   };
-
   const handleRemoverTelefone = (i: number) => {
     const novos = [...telefones];
     novos.splice(i, 1);
@@ -85,12 +82,12 @@ export default function CadastroContato() {
   };
 
   return (
-    <main className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">
+    <main className="max-w-2xl mx-auto p-6 min-h-screen flex flex-col justify-center bg-gray-800 text-white">
+      <h1 className="text-3xl font-bold text-center mb-6">
         {id ? "Editar Contato" : "Novo Contato"}
       </h1>
 
-      <div className="space-y-4">
+      <div className="bg-gray-900 rounded-xl shadow-lg p-6 space-y-4">
         <FloatingInput
           label="Nome"
           value={nome}
@@ -103,38 +100,40 @@ export default function CadastroContato() {
           onChange={(e) => setIdade(Number(e.target.value))}
         />
 
-        <h2 className="font-semibold">Telefones:</h2>
-        {telefones.map((t, i) => (
-          <div key={i} className="flex gap-2 items-center">
-            <input
-              className="flex-1 border p-2 rounded"
-              value={t}
-              onChange={(e) => handleChangeTelefone(i, e.target.value)}
-              placeholder={`Telefone ${i + 1}`}
-            />
-            <button
-              onClick={() => handleRemoverTelefone(i)}
-              className="text-red-600"
-            >
-              Remover
-            </button>
-          </div>
-        ))}
-        <button
-          onClick={handleAddTelefone}
-          className="text-blue-600"
-        >
-          + Adicionar telefone
-        </button>
+        <div>
+          <h2 className="font-semibold text-gray-200 mb-2">Telefones:</h2>
+          {telefones.map((t, i) => (
+            <div key={i} className="flex gap-2 items-center mb-2">
+              <input
+                className="flex-1 border border-gray-600 bg-gray-800 text-white p-2 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                value={t}
+                onChange={(e) => handleChangeTelefone(i, e.target.value)}
+                placeholder={`Telefone ${i + 1}`}
+              />
+              <button
+                onClick={() => handleRemoverTelefone(i)}
+                className="text-red-500 hover:text-red-700 transition"
+              >
+                Remover
+              </button>
+            </div>
+          ))}
+          <button
+            onClick={handleAddTelefone}
+            className="text-blue-600 hover:text-blue-800 font-medium transition"
+          >
+            + Adicionar telefone
+          </button>
+        </div>
 
-        <div className="mt-4">
+        <div className="pt-4">
           <button
             onClick={handleSalvar}
-            className="bg-green-600 text-white px-4 py-2 rounded"
+            className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition"
           >
             Salvar
           </button>
-          {error && <p className="text-red-600 mt-2">{error}</p>}
+          {error && <p className="text-red-600 mt-2 text-sm">{error}</p>}
         </div>
       </div>
     </main>

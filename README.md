@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+📒 Cadastro de Contatos
+Este é um sistema simples de cadastro de contatos com Next.js, Prisma e PostgreSQL, que permite criar, visualizar, editar e excluir contatos com múltiplos números de telefone.
 
-## Getting Started
+🚀 Tecnologias Utilizadas
+Next.js 14
 
-First, run the development server:
+React
 
-```bash
+Prisma ORM
+
+PostgreSQL
+
+Tailwind CSS
+
+TypeScript
+
+🧰 Funcionalidades
+Cadastro de novo contato
+
+Edição de contato existente
+
+Adição e remoção dinâmica de telefones
+
+Exclusão de contatos
+
+Validação de campos (ex: idade máxima de 100 anos)
+
+Interface amigável com inputs flutuantes
+
+📦 Instalação
+Clone o repositório
+
+bash
+Copy
+Edit
+git clone https://github.com/seu-usuario/cadastro-contatos.git
+cd cadastro-contatos
+Instale as dependências
+
+bash
+Copy
+Edit
+npm install
+Configure o banco de dados
+
+Crie um banco de dados PostgreSQL local ou use um remoto.
+
+Copie o arquivo .env.example para .env:
+
+bash
+Copy
+Edit
+cp .env.example .env
+No .env, edite a variável DATABASE_URL com a URL do seu banco:
+
+bash
+Copy
+Edit
+DATABASE_URL=postgresql://usuario:senha@localhost:5432/nomedobanco
+Rode as migrações com Prisma
+
+bash
+Copy
+Edit
+npx prisma migrate dev --name init
+Execute o servidor
+
+bash
+Copy
+Edit
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🗃️ Estrutura do Banco (Prisma)
+prisma
+Copy
+Edit
+model Contato {
+  id        Int        @id @default(autoincrement())
+  nome      String
+  idade     Int
+  telefones Telefone[]
+}
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+model Telefone {
+  id        Int     @id @default(autoincrement())
+  numero    String
+  contatoId Int
+  contato   Contato @relation(fields: [contatoId], references: [id], onDelete: Cascade)
+}
+🔄 Rotas da API
+Método	Rota	Descrição
+GET	/api/contatos	Lista todos os contatos
+POST	/api/contatos	Cria novo contato
+GET	/api/contatos/[id]	Retorna contato por ID
+PUT	/api/contatos/[id]	Atualiza um contato existente
+DELETE	/api/contatos/[id]	Remove um contato
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+🧪 Validações
+A idade não pode ser maior que 100.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Telefones em branco são automaticamente ignorados.
 
-## Learn More
+Campos obrigatórios: nome e idade.
 
-To learn more about Next.js, take a look at the following resources:
+📸 Interface
+A interface foi criada com Tailwind CSS e permite adicionar/remover campos de telefone dinamicamente com facilidade.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+✍️ Contribuição
+Pull requests são bem-vindos! Sinta-se livre para sugerir melhorias, corrigir bugs ou propor novas funcionalidades.
