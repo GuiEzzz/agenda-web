@@ -30,45 +30,39 @@ Interface amigável com inputs flutuantes
 📦 Instalação
 Clone o repositório
 
-bash
-Copy
-Edit
+```bashbash
 git clone https://github.com/seu-usuario/cadastro-contatos.git
 cd cadastro-contatos
+```
 Instale as dependências
 
-bash
-Copy
-Edit
+```bash
 npm install
+```
 Configure o banco de dados
 
 Crie um banco de dados PostgreSQL local ou use um remoto.
 
 Copie o arquivo .env.example para .env:
 
-bash
-Copy
-Edit
+```bash
 cp .env.example .env
+```
 No .env, edite a variável DATABASE_URL com a URL do seu banco:
 
-bash
-Copy
-Edit
+```bash
 DATABASE_URL=postgresql://usuario:senha@localhost:5432/nomedobanco
+```
 Rode as migrações com Prisma
 
-bash
-Copy
-Edit
+```bash
 npx prisma migrate dev --name init
+```
 Execute o servidor
 
-bash
-Copy
-Edit
+```bash
 npm run dev
+```
 🗃️ Estrutura do Banco (Prisma)
 prisma
 Copy
