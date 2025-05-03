@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Contato {
+  id        Int        @id @default(autoincrement())
+  nome      String
+  idade     Int
+  telefones Telefone[]
+}
+
+model Telefone {
+  id         Int     @id @default(autoincrement())
+  contato_id Int
+  numero     String
+  contato    Contato @relation(fields: [contato_id], references: [id], onDelete: Cascade)
+}
