@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FloatingInput from "@/components/FloatingInput";
 
 export default function CadastroContato() {
@@ -13,6 +13,9 @@ export default function CadastroContato() {
   const [idade, setIdade] = useState(0);
   const [telefones, setTelefones] = useState([""]);
   const [error, setError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
+  const isSavingRef = useRef(false); // Bloqueio imediato contra múltiplos envios
 
   useEffect(() => {
     if (id) {
@@ -27,22 +30,34 @@ export default function CadastroContato() {
   }, [id]);
 
   const handleSalvar = async () => {
+    if (isSavingRef.current) return;
+    isSavingRef.current = true;
+    setIsSaving(true);
     setError("");
 
+    // Validações
     if (idade > 100) {
       setError("A idade não pode ser maior que 100.");
+      setIsSaving(false);
+      isSavingRef.current = false;
       return;
     }
     if (idade <= 0) {
       setError("A idade não pode ser menor ou igual à zero.");
+      setIsSaving(false);
+      isSavingRef.current = false;
       return;
     }
     if (!nome.trim()) {
       setError("O campo Nome é obrigatório!");
+      setIsSaving(false);
+      isSavingRef.current = false;
       return;
     }
     if (telefones.length === 0 || telefones.every((t) => !t.trim())) {
       setError("O campo Telefone é obrigatório!");
+      setIsSaving(false);
+      isSavingRef.current = false;
       return;
     }
 
@@ -52,21 +67,28 @@ export default function CadastroContato() {
       telefones: telefones.filter((t) => t.trim() !== ""),
     };
 
-    if (id) {
-      await fetch(`/api/contatos/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-    } else {
-      await fetch("/api/contatos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-    }
+    try {
+      if (id) {
+        await fetch(`/api/contatos/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        await fetch("/api/contatos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
 
-    router.push("/");
+      router.push("/");
+    } catch (error) {
+      setError("Ocorreu um erro ao salvar o contato.");
+    } finally {
+      setIsSaving(false);
+      isSavingRef.current = false;
+    }
   };
 
   const handleAddTelefone = () => setTelefones([...telefones, ""]);
@@ -129,9 +151,12 @@ export default function CadastroContato() {
         <div className="pt-4">
           <button
             onClick={handleSalvar}
-            className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition"
+            disabled={isSaving}
+            className={`w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition ${
+              isSaving ? "cursor-not-allowed opacity-50 pointer-events-none" : ""
+            }`}
           >
-            Salvar
+            {isSaving ? "Salvando..." : "Salvar"}
           </button>
           {error && <p className="text-red-600 mt-2 text-sm">{error}</p>}
         </div>

@@ -39,7 +39,7 @@ export default function HomePage() {
     (c) =>
       c.nome.toLowerCase().includes(busca.toLowerCase()) ||
       c.telefones.some((t) => t.numero.includes(busca))
-  );
+  ).sort((a, b) => a.nome.localeCompare(b.nome));
 
   return (
     <main className="max-w-3xl mx-auto p-6 min-h-screen bg-gray-900 text-white">
@@ -61,41 +61,44 @@ export default function HomePage() {
         </Link>
       </div>
 
-      <ul className="space-y-4">
-        {filtrados.map((contato) => (
-          <li
-            key={contato.id}
-            className="bg-gray-800 shadow rounded-lg p-4 flex justify-between items-start"
-          >
-            <div>
-              <p className="font-semibold text-lg text-white">{contato.nome}</p>
-              <p className="text-sm text-gray-400 mb-1">
-                {contato.idade} anos
-              </p>
-              <p className="text-sm text-gray-300">
-                Telefones:{" "}
-                <span className="font-medium text-white">
-                  {contato.telefones.map((t) => t.numero).join(", ")}
-                </span>
-              </p>
-            </div>
-            <div className="flex flex-col gap-2 items-end text-sm">
-              <Link
-                href={`/cadastro?id=${contato.id}`}
-                className="text-blue-400 hover:underline"
-              >
-                Editar
-              </Link>
-              <button
-                onClick={() => excluirContato(contato.id)}
-                className="text-red-400 hover:underline"
-              >
-                Excluir
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {/* Contêiner com rolagem quando houver muitos contatos */}
+      <div className="max-h-[500px] overflow-y-auto space-y-4">
+        <ul>
+          {filtrados.map((contato, index) => (
+            <li
+              key={contato.id}
+              className={`${
+                index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'
+              } shadow-md rounded-lg p-2 flex justify-between items-start transition-all transform hover:scale-100 hover:shadow-lg overflow-hidden`}
+            >
+              <div className="max-w-full overflow-hidden">
+                <p className="font-semibold text-md text-white truncate">{contato.nome}</p>
+                <p className="text-xs text-gray-400 mb-1">{contato.idade} anos</p>
+                <p className="text-xs text-gray-300">
+                  Telefones:{" "}
+                  <span className="font-medium text-white">
+                    {contato.telefones.map((t) => t.numero).join(", ")}
+                  </span>
+                </p>
+              </div>
+              <div className="flex flex-col gap-1 items-end text-xs">
+                <Link
+                  href={`/cadastro?id=${contato.id}`}
+                  className="text-blue-400 hover:underline transition-all duration-200"
+                >
+                  Editar
+                </Link>
+                <button
+                  onClick={() => excluirContato(contato.id)}
+                  className="text-red-400 hover:text-red-600 transition-all duration-200"
+                >
+                  Excluir
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       {filtrados.length === 0 && (
         <p className="text-center text-gray-500 mt-6">

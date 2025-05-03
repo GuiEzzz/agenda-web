@@ -3,9 +3,9 @@ import { prisma } from '@/lib/prisma'
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const id = parseInt(params.id)
+  const id = parseInt(context.params.id)
 
   try {
     await prisma.contato.delete({
