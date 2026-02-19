@@ -23,9 +23,11 @@ export async function DELETE(
 }
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
+  const { id } = await params
+
   const contato = await prisma.contato.findUnique({
     where: {
-      id: Number(params.id),
+      id: Number(id),
     },
     include: {
       telefones: true,
@@ -41,10 +43,12 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   const { nome, idade, telefones } = await req.json();
+  const { id } = await params
+   
 
   const contatoAtualizado = await prisma.contato.update({
     where: {
-      id: Number(params.id),
+      id: Number(id),
     },
     data: {
       nome,
